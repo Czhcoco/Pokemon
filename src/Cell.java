@@ -1,3 +1,5 @@
+import java.util.ArrayList;
+
 public class Cell {
 
     private int row;
@@ -6,6 +8,12 @@ public class Cell {
     boolean visited;
     boolean valid;
     int dist;
+
+    ArrayList<Cell> path;
+
+    {
+        path = new ArrayList<>();
+    }
 
     Cell(int row, int col) {
         this.row = row;
@@ -53,6 +61,14 @@ public class Cell {
 
     public void setDist(int dist) {
         this.dist = dist;
+    }
+
+    public ArrayList<Cell> getPath() {
+        return path;
+    }
+
+    public void setPath(ArrayList<Cell> path) {
+        this.path = new ArrayList<>(path);
     }
 
     @Override

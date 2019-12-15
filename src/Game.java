@@ -1,12 +1,12 @@
-import java.io.File;
-import java.io.BufferedReader;
-import java.io.FileReader;
+import java.io.*;
+import java.nio.file.Path;
 import java.util.ArrayList;
 
 public class Game {
 
 	private static Map map;
 	private static Player player;
+	private static long timer;
 
 	public void initialize(File inputFile) throws Exception{
 		BufferedReader br = new BufferedReader(new FileReader(inputFile));
@@ -16,7 +16,7 @@ public class Game {
 		int M = Integer.parseInt(line.split(" ")[0]);
 		int N = Integer.parseInt(line.split(" ")[1]);
 
-		Map map = new Map(M,N);
+		this.map = new Map(M,N);
 
 		for (int i = 0; i < M; i++) {
 			line = br.readLine();
@@ -27,7 +27,7 @@ public class Game {
 
 		line = br.readLine();
 		while (line != null) {
-			String content[] = br.readLine().split(",");
+			String content[] = line.split(",");
 			for (int i = 0; i < content.length; i++) {
 				content[i].trim();
 			}
@@ -50,12 +50,12 @@ public class Game {
 
 		br.close();
 
-		player.setRow(map.getStart().getRow());
-		player.setCol(map.getStart().getCol());
+		this.player = new Player(map.getStart().getRow(), map.getStart().getCol());
 		map.getVisitList().add(0, map.getStart());
 		map.getVisitList().add(map.getDestination());
 		map.setWholeList();
 		map.findShortestPath();
+		map.getVisitList().remove(map.getStart());
 		map.getVisitList().remove(map.getDestination());
 		player.addPath(map.getStart());
 	}
@@ -64,38 +64,76 @@ public class Game {
 		if (cell instanceof Station) {
 			return ((Station) cell).getNumOfBalls();
 		} else if (cell instanceof Pokemon) {
-			return 5 + player.newType(((Pokemon) cell)) * 10 + player.cpChange(cell);
+			return 5 + player.newType(((Pokemon) cell)) * 10 + player.cpChange(cell) - ((Pokemon) cell).getNumOfRequiredBalls();
 		}
 		return 0;
 	}
 
 	public int getBenefit(Cell current, Cell next) {
-		return getScore(next) - map.getDistance(current, next) - map.getDistance(next, map.getDestination());
+		return getScore(next) - map.getDistance(current, next);
 	}
 
-	public int findPath(int[][] distance, ArrayList<Cell> visitList, ArrayList<Cell> path) {
-		int score = getBenefit(map.getStart(), map.getDestination());
+	public Pair findPath(ArrayList<Cell> visitList, Player currentPlayer, int k) {
+		int score = -map.getDistance(currentPlayer.getPath().get(currentPlayer.getPath().size() - 1), map.getDestination());
+		Player bestPlayer = new Player(currentPlayer);
+//		System.out.println("vist size:" + visitList.size());
 		for (int i = 0; i < visitList.size(); i++) {
-			path.add(visitList.get(i));
-			Cell current = path.get(path.size() - 2);
-			Cell next = path.get(path.size() - 1);
-			ArrayList<Cell> newList = new ArrayList<Cell>(visitList);
-			newList.remove(visitList.get(i));
-			int newScore = Math.max(score, getBenefit(current, next) + findPath(distance, newList, path));
-			if (newScore == score) {
-				path.remove(next);
+			if (!(visitList.get(i) instanceof Pokemon
+					&& currentPlayer.getBallInBag() < ((Pokemon) visitList.get(i)).getNumOfRequiredBalls())) {
+
+				Player newPlayer = new Player(currentPlayer);
+				player = newPlayer;
+
+				Cell current = newPlayer.getPath().get(currentPlayer.getPath().size() - 1);
+				Cell next = visitList.get(i);
+				int benefit = getBenefit(current, next);
+				newPlayer.addPath(visitList.get(i));
+				ArrayList<Cell> newList = new ArrayList<Cell>(visitList);
+				newList.remove(visitList.get(i));
+
+				Pair newPair = findPath(newList, newPlayer, k+1);
+				newPair.setScore(benefit + newPair.getScore());
+				int newScore = Math.max(score, newPair.getScore());
+				if (newScore > score) {
+					score = newScore;
+					bestPlayer = new Player(newPair.getPlayer());
+				}
 			}
 		}
-		return score;
+
+		Pair bestPair = new Pair(score, bestPlayer);
+//		System.out.println("Path's size " + bestPair.getPlayer().getPath().size());
+//		System.out.println("Best score: " + score);
+		return bestPair;
 	}
 
-	public void printPath() {
+	public void printPath(Pair pair) {
+		System.out.println(player.getBallInBag() + ":" + player.getPokemonCaught().size() + ":" + player.getCaughtTypes().size()
+		+ ":" + player.getMaxCP());
+		System.out.print("<" + map.getStart().getRow() + "," + map.getStart().getCol() + ">");
+		for (int i = 0; i < player.getPath().size() - 1; i++) {
+			map.printPath(player.getPath().get(i), player.getPath().get(i+1));
+		}
+	}
 
+	private void writeSolutionToFile(File outputFile, Pair pair) throws Exception {
+		BufferedWriter bw = new BufferedWriter(new FileWriter(outputFile));
+		bw.write(String.valueOf(pair.getScore()));
+		bw.newLine();
+		bw.write(player.getBallInBag() + ":" + player.getPokemonCaught().size() + ":" + player.getCaughtTypes().size()
+				+ ":" + player.getMaxCP());
+		bw.newLine();
+		bw.write("<" + map.getStart().getRow() + "," + map.getStart().getCol() + ">");
+		for (int i = 0; i < player.getPath().size() - 1; i++) {
+			bw.write("->" + map.writePath(player.getPath().get(i), player.getPath().get(i+1)));
+
+		}
+		bw.close();
 	}
 
 	public static void main(String[] args) throws Exception{
-		File inputFile = new File("./sampleInput.txt");
-		File outputFile = new File("./sampleOut.txt");
+		File inputFile = new File("./sampleIn.txt");
+		File outputFile = new File("./sampleOutput.txt");
 
 		if (args.length > 0) {
 			inputFile = new File(args[0]);
@@ -104,15 +142,51 @@ public class Game {
 		if (args.length > 1) {
 			outputFile = new File(args[1]);
 		}
+		long startTime, stopTime;
+
+		Game.timer = System.nanoTime();
+		startTime = System.nanoTime();
 
 		Game game = new Game();
 		game.initialize(inputFile);
-		int score = game.findPath(map.getDistance(), map.getVisitList(), player.getPath());
+		Pair bestPair = game.findPath(map.getVisitList(), player, 0);
+		player = bestPair.getPlayer();
+		player.addPath(map.getDestination());
+		game.printPath(bestPair);
+		game.writeSolutionToFile(outputFile, bestPair);
 
-		System.out.println(score);
-		
+		stopTime = System.nanoTime();
+		System.out.println();
+		System.out.println("FindPath Time: " + (stopTime - startTime) / 1000000000.0);
+
 		// TODO:
 		// Read the configures of the map and pokemons from the file inputFile
 		// and output the results to the file outputFile
+	}
+}
+
+class Pair {
+	private int score;
+	private Player player;
+
+	Pair(int score, Player player) {
+		this.score = score;
+		this.player = new Player(player);
+	}
+
+	public Player getPlayer() {
+		return player;
+	}
+
+	public int getScore() {
+		return score;
+	}
+
+	public void setScore(int score) {
+		this.score = score;
+	}
+
+	public void setPlayer(Player player) {
+		this.player = new Player(player);
 	}
 }

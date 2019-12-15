@@ -2,14 +2,14 @@ import java.util.ArrayList;
 
 public class Player {
 
-    public int row;
-    public int col;
-    public ArrayList<Pokemon> pokemonCaught;
-    public ArrayList<Cell> path;
+    private int row;
+    private int col;
+    private ArrayList<Pokemon> pokemonCaught;
+    private ArrayList<Cell> path;
     private ArrayList<String> caughtTypes;
-    public int ballInBag;
-    public int steps;
-    public int maxCP;
+    private int ballInBag;
+    private int steps;
+    private int maxCP;
 
     {
         pokemonCaught = new ArrayList<Pokemon>();
@@ -23,6 +23,16 @@ public class Player {
         steps = 0;
         ballInBag = 0;
         maxCP = 0;
+    }
+
+    public Player(Player player) {
+        this.row = player.row;
+        this.col = player.col;
+        this.ballInBag = player.ballInBag;
+        this.maxCP = player.maxCP;
+        this.pokemonCaught = new ArrayList<>(player.pokemonCaught);
+        this.path = new ArrayList<>(player.path);
+        this.caughtTypes = new ArrayList<>(player.caughtTypes);
     }
 
     public int getRow() {
@@ -49,10 +59,17 @@ public class Player {
         return path;
     }
 
+    public int getMaxCP() {
+        return maxCP;
+    }
+
     public void addPath(Cell cell) {
         path.add(cell);
         if (cell instanceof Pokemon) {
             addPokemonToBag((Pokemon) cell);
+            changeBallInBag(-((Pokemon) cell).getNumOfRequiredBalls());
+        } else if (cell instanceof Station){
+            changeBallInBag(((Station) cell).getNumOfBalls());
         }
     }
 
@@ -60,6 +77,9 @@ public class Player {
         path.remove(cell);
         if (cell instanceof Pokemon) {
             removePokemonInBag((Pokemon) cell);
+            changeBallInBag(((Pokemon) cell).getNumOfRequiredBalls());
+        } else if (cell instanceof Station){
+            changeBallInBag(-((Station) cell).getNumOfBalls());
         }
     }
 
@@ -91,7 +111,6 @@ public class Player {
         if (pokemon.getCombatPower() > maxCP) {
             maxCP = pokemon.getCombatPower();
         }
-
     }
 
     public void removePokemonInBag(Pokemon pokemon) {

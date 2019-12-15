@@ -1,12 +1,10 @@
 import java.io.*;
-import java.nio.file.Path;
 import java.util.ArrayList;
 
 public class Game {
 
 	private static Map map;
 	private static Player player;
-	private static long timer;
 
 	public void initialize(File inputFile) throws Exception{
 		BufferedReader br = new BufferedReader(new FileReader(inputFile));
@@ -144,7 +142,6 @@ public class Game {
 		}
 		long startTime, stopTime;
 
-		Game.timer = System.nanoTime();
 		startTime = System.nanoTime();
 
 		Game game = new Game();
@@ -157,7 +154,7 @@ public class Game {
 
 		stopTime = System.nanoTime();
 		System.out.println();
-		System.out.println("FindPath Time: " + (stopTime - startTime) / 1000000000.0);
+		System.out.println("FindPath Time: " + (stopTime - startTime) / 1000000000.0 + " second(s)");
 
 		// TODO:
 		// Read the configures of the map and pokemons from the file inputFile
@@ -184,9 +181,5 @@ class Pair {
 
 	public void setScore(int score) {
 		this.score = score;
-	}
-
-	public void setPlayer(Player player) {
-		this.player = new Player(player);
 	}
 }

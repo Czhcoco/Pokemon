@@ -5,7 +5,6 @@ public class Cell {
     private int row;
     private int col;
 
-    boolean visited;
     boolean valid;
     int dist;
 
@@ -18,7 +17,6 @@ public class Cell {
     Cell(int row, int col) {
         this.row = row;
         this.col = col;
-        this.visited = false;
         this.valid = true;
         this.dist = 0;
     }
@@ -31,28 +29,12 @@ public class Cell {
         return col;
     }
 
-    public boolean isVisited() {
-        return visited;
-    }
-
     public boolean isValid() {
         return valid;
     }
 
     public void setValid(boolean valid) {
         this.valid = valid;
-    }
-
-    public void setVisited(boolean visited) {
-        this.visited = visited;
-    }
-
-    public void setCol(int col) {
-        this.col = col;
-    }
-
-    public void setRow(int row) {
-        this.row = row;
     }
 
     public int getDist() {

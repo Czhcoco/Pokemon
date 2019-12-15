@@ -1,4 +1,3 @@
-import java.io.File;
 import java.util.*;
 
 public class Map {
@@ -87,49 +86,9 @@ public class Map {
     private static final int rowNum[] = {-1, 0, 0, 1};
     private static final int colNum[] = {0, -1, 1, 0};
 
-//    public void findShortestPath() {
-//        distance = new int [visitList.size()][visitList.size()];
-//        for (int i = 0; i < visitList.size(); i++) {
-//            for (int j = 0; j < visitList.size(); j++) {
-//                boolean[][] visited = new boolean[MAX_ROW][MAX_COL];
-//                int rowI = visitList.get(i).getRow();
-//                int colI = visitList.get(i).getCol();
-//                visited[rowI][colI] = true;
-////                System.out.println(i + ", " + j + ": " + rowI + ", " + colI );
-//
-//                Queue<Cell> queue = new LinkedList<>();
-//                queue.add(visitList.get(i));
-//
-//                while (!queue.isEmpty()) {
-//                    Cell current = queue.peek();
-//                    int dist = current.getDist();
-//
-//                    if (current.equals(visitList.get(j))) {
-//                        distance[i][j] = dist;
-//                        System.out.println(i + " to " + j + ": " + distance[i][j]);
-//                        break;
-//                    }
-//
-//                    queue.remove();
-//
-//                    for (int k = 0; k < 4; k++) {
-//                        int rowAdj = current.getRow() + rowNum[k];
-//                        int colAdj = current.getCol() + colNum[k];
-//                        if (isValid(rowAdj, colAdj) && !visited[rowAdj][colAdj]) {
-//                            visited[rowAdj][colAdj] = true;
-//                            Cell adjCell = new Cell(rowAdj, colAdj);
-//                            adjCell.setDist(dist + 1);
-////                            System.out.println(rowAdj + ", " + colAdj + " visited");
-//                            queue.add(adjCell);
-////                            System.out.println("queue's size:" + queue.size());
-//                        }
-//                    }
-//                }
-//            }
-//        }
-//    }
 
-        public void findShortestPath() {
+
+    public void findShortestPath() {
         distance = new int [visitList.size()][visitList.size()];
         for (int i = 0; i < visitList.size(); i++) {
             Path pathI = new Path();

@@ -8,7 +8,6 @@ public class Player {
     private ArrayList<Cell> path;
     private ArrayList<String> caughtTypes;
     private int ballInBag;
-    private int steps;
     private int maxCP;
 
     {
@@ -20,7 +19,6 @@ public class Player {
     public Player(int row, int col) {
         this.row = row;
         this.col = col;
-        steps = 0;
         ballInBag = 0;
         maxCP = 0;
     }
@@ -33,22 +31,6 @@ public class Player {
         this.pokemonCaught = new ArrayList<>(player.pokemonCaught);
         this.path = new ArrayList<>(player.path);
         this.caughtTypes = new ArrayList<>(player.caughtTypes);
-    }
-
-    public int getRow() {
-        return row;
-    }
-
-    public int getCol() {
-        return col;
-    }
-
-    public void setRow(int row) {
-        this.row = row;
-    }
-
-    public void setCol(int col) {
-        this.col = col;
     }
 
     public ArrayList<Pokemon> getPokemonCaught() {
@@ -87,20 +69,12 @@ public class Player {
         return caughtTypes;
     }
 
-    public int getSteps() {
-        return steps;
-    }
-
     public int getBallInBag() {
         return ballInBag;
     }
 
     public void changeBallInBag(int ballInBag) {
         this.ballInBag += ballInBag;
-    }
-
-    public void addSteps(int steps) {
-        this.steps += steps;
     }
 
     public void addPokemonToBag(Pokemon pokemon) {

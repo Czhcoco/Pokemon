@@ -2,7 +2,7 @@ import java.util.*;
 
 public class Map {
 
-    public static final char WALL = '#', PATH = ' ', START = 'B', DESTINATION = 'D', STATION = 'S', POKEMON = 'P';
+    private static final char WALL = '#', PATH = ' ', START = 'B', DESTINATION = 'D', STATION = 'S', POKEMON = 'P';
 
     private Cell[][] cells;
     private int MAX_ROW;
@@ -21,13 +21,26 @@ public class Map {
         wholePath = new ArrayList<>();
     }
 
+    /**
+     * Create map with given row and column
+     *
+     * @param row row number of map
+     * @param col column number of map
+     */
     Map(int row, int col) {
         this.MAX_ROW = row;
         this.MAX_COL = col;
         cells = new Cell[row][col];
     }
 
-    public void setPath(int row, int col, char type) {
+    /**
+     * Convert input character to corresponding type of cell
+     *
+     * @param row row of given cell
+     * @param col column of given cell
+     * @param type type of given cell
+     */
+    void setPath(int row, int col, char type) {
         if (row < MAX_ROW && row >= 0 && col < MAX_COL && col >= 0) {
             switch (type) {
                 case WALL:
@@ -49,46 +62,91 @@ public class Map {
         }
     }
 
-    public void addStation(Station station) {
+    /**
+     * Add a station to the visit list
+     *
+     * @param station station to be added
+     */
+    void addStation(Station station) {
         visitList.add(station);
         cells[station.getRow()][station.getCol()] = station;
     }
 
-    public void addPokemon(Pokemon pokemon) {
+    /**
+     * Add a pokemon to the visit list
+     *
+     * @param pokemon pokemon to be added
+     */
+    void addPokemon(Pokemon pokemon) {
         visitList.add(pokemon);
         cells[pokemon.getRow()][pokemon.getCol()] = pokemon;
     }
 
-    public Cell getStart() {
+    /**
+     * Get the start point for player
+     *
+     * @return start point
+     */
+    Cell getStart() {
         return start;
     }
 
-    public Cell getDestination() {
+    /**
+     * Get the destination point for player
+     *
+     * @return destination point
+     */
+    Cell getDestination() {
         return destination;
     }
 
-    public ArrayList<Cell> getVisitList() {
+    /**
+     * Get the visit list for player
+     *
+     * @return visit list
+     */
+    ArrayList<Cell> getVisitList() {
         return visitList;
     }
 
-    public int getDistance(Cell a, Cell b) {
+    /**
+     * Get the distance between two cells. Every cell should be one of station, pokemon, start, or destination
+     *
+     * @param a cell a
+     * @param b cell b
+     * @return distance between cell a and cell b
+     */
+    int getDistance(Cell a, Cell b) {
         return distance[wholeList.indexOf(a)][wholeList.indexOf(b)];
     }
 
-    public void setWholeList() {
+    /**
+     * Whole list is consist of all of the pokemon, stations, start and destination
+     */
+    void setWholeList() {
         wholeList.addAll(visitList);
     }
 
-    public boolean isValid(int row, int col) {
+    /**
+     * Check whether the location is valid
+     *
+     * @param row row of cell
+     * @param col column of cell
+     * @return whether the location can be passed
+     */
+    private boolean isValid(int row, int col) {
         return (row >= 0 && row < MAX_ROW && col >= 0 && col < MAX_COL && cells[row][col].isValid());
     }
 
-    private static final int rowNum[] = {-1, 0, 0, 1};
-    private static final int colNum[] = {0, -1, 1, 0};
+    private static final int[] rowNum = {-1, 0, 0, 1};
+    private static final int[] colNum = {0, -1, 1, 0};
 
 
-
-    public void findShortestPath() {
+    /**
+     * Use BFS to find the shortest path from pokemon/station A to pokemon/station B
+     * Store the shortest paths in wholePath
+     */
+    void findShortestPath() {
         distance = new int [visitList.size()][visitList.size()];
         for (int i = 0; i < visitList.size(); i++) {
             Path pathI = new Path();
@@ -136,7 +194,13 @@ public class Map {
         }
     }
 
-    public void printPath(Cell a, Cell b) {
+    /**
+     * Print the path from cell a to cell b
+     *
+     * @param a cell a
+     * @param b cell b
+     */
+    void printPath(Cell a, Cell b) {
         ArrayList<Cell> path = wholePath.get(wholeList.indexOf(a)).getPath(wholeList.indexOf(b));
         for (int i = 0; i < path.size(); i++) {
             System.out.print("<" + path.get(i).getRow() + "," + path.get(i).getCol() + ">");
@@ -146,7 +210,13 @@ public class Map {
         }
     }
 
-    public String writePath(Cell a, Cell b) {
+    /**
+     * Preparation for writing the path from cell a to cell b into file
+     * @param a cell a
+     * @param b cell b
+     * @return string containing the path from cell a to cell b
+     */
+    String writePath(Cell a, Cell b) {
         StringBuilder pathString = new StringBuilder();
         ArrayList<Cell> path = wholePath.get(wholeList.indexOf(a)).getPath(wholeList.indexOf(b));
         for (int i = 0; i < path.size(); i++) {

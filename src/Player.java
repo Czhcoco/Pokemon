@@ -11,19 +11,31 @@ public class Player {
     private int maxCP;
 
     {
-        pokemonCaught = new ArrayList<Pokemon>();
-        path = new ArrayList<Cell>();
-        caughtTypes = new ArrayList<String>();
+        pokemonCaught = new ArrayList<>();
+        path = new ArrayList<>();
+        caughtTypes = new ArrayList<>();
     }
 
-    public Player(int row, int col) {
+    /**
+     * Create a player with given row and column
+     * Initialize the number of balls in bag to 0 and max combat power to 0
+     *
+     * @param row row of player
+     * @param col column of player
+     */
+    Player(int row, int col) {
         this.row = row;
         this.col = col;
         ballInBag = 0;
         maxCP = 0;
     }
 
-    public Player(Player player) {
+    /**
+     * Create a player according to a given player
+     *
+     * @param player player to be copied
+     */
+    Player(Player player) {
         this.row = player.row;
         this.col = player.col;
         this.ballInBag = player.ballInBag;
@@ -33,19 +45,39 @@ public class Player {
         this.caughtTypes = new ArrayList<>(player.caughtTypes);
     }
 
-    public ArrayList<Pokemon> getPokemonCaught() {
+    /**
+     * Get the list of pokemon caught by the player
+     *
+     * @return list of pokemon caught by the player
+     */
+    ArrayList<Pokemon> getPokemonCaught() {
         return pokemonCaught;
     }
 
-    public ArrayList<Cell> getPath() {
+    /**
+     * Get the path of the player
+     *
+     * @return current path of the player
+     */
+    ArrayList<Cell> getPath() {
         return path;
     }
 
-    public int getMaxCP() {
+    /**
+     * Get the max combat power of pokemon caught by the player
+     *
+     * @return max combat power
+     */
+    int getMaxCP() {
         return maxCP;
     }
 
-    public void addPath(Cell cell) {
+    /**
+     * Add a pokemon/station to path of the player
+     *
+     * @param cell pokemon/station to be added
+     */
+    void addPath(Cell cell) {
         path.add(cell);
         if (cell instanceof Pokemon) {
             addPokemonToBag((Pokemon) cell);
@@ -55,29 +87,49 @@ public class Player {
         }
     }
 
-    public void removePath(Cell cell) {
-        path.remove(cell);
-        if (cell instanceof Pokemon) {
-            removePokemonInBag((Pokemon) cell);
-            changeBallInBag(((Pokemon) cell).getNumOfRequiredBalls());
-        } else if (cell instanceof Station){
-            changeBallInBag(-((Station) cell).getNumOfBalls());
-        }
-    }
+//    public void removePath(Cell cell) {
+//        path.remove(cell);
+//        if (cell instanceof Pokemon) {
+//            removePokemonInBag((Pokemon) cell);
+//            changeBallInBag(((Pokemon) cell).getNumOfRequiredBalls());
+//        } else if (cell instanceof Station){
+//            changeBallInBag(-((Station) cell).getNumOfBalls());
+//        }
+//    }
 
-    public ArrayList<String> getCaughtTypes() {
+    /**
+     * Get the list of types of pokemon caught by the player
+     *
+     * @return list of types
+     */
+    ArrayList<String> getCaughtTypes() {
         return caughtTypes;
     }
 
-    public int getBallInBag() {
+    /**
+     * Get the number of balls in bag
+     *
+     * @return number of balls in bag
+     */
+    int getBallInBag() {
         return ballInBag;
     }
 
-    public void changeBallInBag(int ballInBag) {
+    /**
+     * Add/Remove balls in bag
+     *
+     * @param ballInBag number of balls to be modified
+     */
+    private void changeBallInBag(int ballInBag) {
         this.ballInBag += ballInBag;
     }
 
-    public void addPokemonToBag(Pokemon pokemon) {
+    /**
+     * Add a pokemon to bag
+     *
+     * @param pokemon pokemon to be added
+     */
+    private void addPokemonToBag(Pokemon pokemon) {
         this.pokemonCaught.add(pokemon);
         if (!caughtTypes.contains(pokemon.getType())) {
             caughtTypes.add(pokemon.getType());
@@ -87,25 +139,37 @@ public class Player {
         }
     }
 
-    public void removePokemonInBag(Pokemon pokemon) {
-        pokemonCaught.remove(pokemon);
-        boolean typeRepeated = false;
-        for (var c: pokemonCaught) {
-            if (c.getType() == pokemon.getType())
-                typeRepeated = true;
-        }
-        if (!typeRepeated) {
-            caughtTypes.remove(pokemon.getType());
-        }
-    }
+//    public void removePokemonInBag(Pokemon pokemon) {
+//        pokemonCaught.remove(pokemon);
+//        boolean typeRepeated = false;
+//        for (var c: pokemonCaught) {
+//            if (c.getType() == pokemon.getType())
+//                typeRepeated = true;
+//        }
+//        if (!typeRepeated) {
+//            caughtTypes.remove(pokemon.getType());
+//        }
+//    }
 
-    public int newType(Pokemon pokemon) {
+    /**
+     * Check whether the type of pokemon to be caught is a new type
+     *
+     * @param pokemon pokemon to be caught
+     * @return whether it is a new type
+     */
+    int newType(Pokemon pokemon) {
         if (!caughtTypes.contains(pokemon.getType()))
             return 1;
         return 0;
     }
 
-    public int cpChange(Cell cell) {
+    /**
+     * Calculate the change of maximum combat power if the given cell is passed
+     *
+     * @param cell cell to be passed
+     * @return the change of the maximum combat power
+     */
+    int cpChange(Cell cell) {
         if (cell instanceof Pokemon) {
             if (((Pokemon) cell).getCombatPower() > maxCP)
                 return ((Pokemon) cell).getCombatPower() - maxCP;

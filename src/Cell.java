@@ -5,15 +5,21 @@ public class Cell {
     private int row;
     private int col;
 
-    boolean valid;
-    int dist;
+    private boolean valid;
+    private int dist;
 
-    ArrayList<Cell> path;
+    private ArrayList<Cell> path;
 
     {
         path = new ArrayList<>();
     }
 
+    /**
+     * Create a cell with specific row and column, set valid to true and dist to 0
+     *
+     * @param row the row of cell
+     * @param col the column of cell
+     */
     Cell(int row, int col) {
         this.row = row;
         this.col = col;
@@ -21,46 +27,92 @@ public class Cell {
         this.dist = 0;
     }
 
-    public int getRow() {
+    /**
+     * Get the row of cell
+     *
+     * @return Cell's row
+     */
+    int getRow() {
         return row;
     }
 
-    public int getCol() {
+    /**
+     * Get the column of cell
+     *
+     * @return Cell's column
+     */
+    int getCol() {
         return col;
     }
 
-    public boolean isValid() {
+    /**
+     * Check whether the cell can be passes
+     *
+     * @return false for wall, true otherwise
+     */
+    boolean isValid() {
         return valid;
     }
 
-    public void setValid(boolean valid) {
+    /**
+     * Set valid for cell
+     *
+     * @param valid whether the cell is a wall. False for wall, true otherwise
+     */
+    void setValid(boolean valid) {
         this.valid = valid;
     }
 
-    public int getDist() {
+    /**
+     * Get the distance of the cell from known source
+     *
+     * @return the distance from source
+     */
+    int getDist() {
         return dist;
     }
 
-    public void setDist(int dist) {
+    /**
+     * Set the distance from this cell to a known source
+     *
+     * @param dist distance to source
+     */
+    void setDist(int dist) {
         this.dist = dist;
     }
 
-    public ArrayList<Cell> getPath() {
+    /**
+     * Get the path from a known source cell to this cell
+     *
+     * @return path from source cell
+     */
+    ArrayList<Cell> getPath() {
         return path;
     }
 
-    public void setPath(ArrayList<Cell> path) {
+    /**
+     * Set the path from a known source cell to this cell
+     *
+     * @param path path from source cell
+     */
+    void setPath(ArrayList<Cell> path) {
         this.path = new ArrayList<>(path);
     }
 
+    /**
+     * Check whether two cell are in the same place
+     *
+     * @param o object to be compared
+     * @return true for same place, false otherwise
+     */
     @Override
     public boolean equals(Object o) {
         Cell temp = (Cell) o;
         return temp.row == this.row && temp.col == this.col;
     }
 
-    @Override
-    public String toString() {
-        return "Cell [row=" + row + ", col=" + col + "]";
-    }
+//    @Override
+//    public String toString() {
+//        return "Cell [row=" + row + ", col=" + col + "]";
+//    }
 }

@@ -1,18 +1,26 @@
-public class Station extends Cell {
+class Station extends Cell {
 
     private int numOfBalls;
 
+    /**
+     * Create a station with given row, column and number of balls
+     *
+     * @param row the row of station
+     * @param col the column of station
+     * @param numOfBalls number of balls in station
+     */
     Station(int row, int col, int numOfBalls) {
         super(row, col);
         this.numOfBalls = numOfBalls;
     }
 
-    public int getNumOfBalls() {
+    /**
+     * Get number of balls in the station
+     *
+     * @return number of balls
+     */
+    int getNumOfBalls() {
         return numOfBalls;
-    }
-
-    public void setNumOfBalls(int numOfBalls) {
-        this.numOfBalls = numOfBalls;
     }
 
 //    @Override
@@ -29,8 +37,8 @@ public class Station extends Cell {
 //        return true;
 //    }
 
-    @Override
-    public String toString() {
-        return "Station [" + super.toString() +" numPokeBalls=" + numOfBalls + "]";
-    }
+//    @Override
+//    public String toString() {
+//        return "Station [" + super.toString() +" numPokeBalls=" + numOfBalls + "]";
+//    }
 }

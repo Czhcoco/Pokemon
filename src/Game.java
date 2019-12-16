@@ -6,6 +6,12 @@ public class Game {
 	private static Map map;
 	private static Player player;
 
+	/**
+	 * Initialize game with given input file
+	 *
+	 * @param inputFile given input file
+	 * @throws Exception every exception when read file
+	 */
 	public void initialize(File inputFile) throws Exception{
 		BufferedReader br = new BufferedReader(new FileReader(inputFile));
 		
@@ -14,7 +20,7 @@ public class Game {
 		int M = Integer.parseInt(line.split(" ")[0]);
 		int N = Integer.parseInt(line.split(" ")[1]);
 
-		this.map = new Map(M,N);
+		map = new Map(M,N);
 
 		for (int i = 0; i < M; i++) {
 			line = br.readLine();
@@ -25,10 +31,10 @@ public class Game {
 
 		line = br.readLine();
 		while (line != null) {
-			String content[] = line.split(",");
-			for (int i = 0; i < content.length; i++) {
-				content[i].trim();
-			}
+			String[] content = line.split(",");
+//			for (String s : content) {
+//				s.trim();
+//			}
 
 			if(content.length > 3) {
 				Pokemon pokemon = new Pokemon(Integer.parseInt(content[0].substring(1)),
@@ -48,7 +54,7 @@ public class Game {
 
 		br.close();
 
-		this.player = new Player(map.getStart().getRow(), map.getStart().getCol());
+		player = new Player(map.getStart().getRow(), map.getStart().getCol());
 		map.getVisitList().add(0, map.getStart());
 		map.getVisitList().add(map.getDestination());
 		map.setWholeList();
@@ -58,7 +64,13 @@ public class Game {
 		player.addPath(map.getStart());
 	}
 
-	public int getScore(Cell cell) {
+	/**
+	 * Calculate the score of given pokemon/station
+	 *
+	 * @param cell pokemon or station
+	 * @return the score of given pokemon/station
+	 */
+	private int getScore(Cell cell) {
 		if (cell instanceof Station) {
 			return ((Station) cell).getNumOfBalls();
 		} else if (cell instanceof Pokemon) {
@@ -67,14 +79,28 @@ public class Game {
 		return 0;
 	}
 
-	public int getBenefit(Cell current, Cell next) {
+	/**
+	 * Calculate the benefit of going to station/pokemon current to station/pokemon next
+	 *
+	 * @param current current place
+	 * @param next next place
+	 * @return the benefit of this move
+	 */
+	private int getBenefit(Cell current, Cell next) {
 		return getScore(next) - map.getDistance(current, next);
 	}
 
-	public Pair findPath(ArrayList<Cell> visitList, Player currentPlayer, int k) {
+	/**
+	 * Find the optimal path with highest score
+	 *
+	 * @param visitList list of pokemon and stations
+	 * @param currentPlayer player
+	 * @return the best path and highest score
+	 */
+	private Pair findPath(ArrayList<Cell> visitList, Player currentPlayer) {
 		int score = -map.getDistance(currentPlayer.getPath().get(currentPlayer.getPath().size() - 1), map.getDestination());
 		Player bestPlayer = new Player(currentPlayer);
-//		System.out.println("vist size:" + visitList.size());
+//		System.out.println("visit size:" + visitList.size());
 		for (int i = 0; i < visitList.size(); i++) {
 			if (!(visitList.get(i) instanceof Pokemon
 					&& currentPlayer.getBallInBag() < ((Pokemon) visitList.get(i)).getNumOfRequiredBalls())) {
@@ -89,7 +115,7 @@ public class Game {
 				ArrayList<Cell> newList = new ArrayList<Cell>(visitList);
 				newList.remove(visitList.get(i));
 
-				Pair newPair = findPath(newList, newPlayer, k+1);
+				Pair newPair = findPath(newList, newPlayer);
 				newPair.setScore(benefit + newPair.getScore());
 				int newScore = Math.max(score, newPair.getScore());
 				if (newScore > score) {
@@ -105,15 +131,26 @@ public class Game {
 		return bestPair;
 	}
 
-	public void printPath(Pair pair) {
+	/**
+	 * Print the best solution in console
+	 */
+	private void printPath() {
 		System.out.println(player.getBallInBag() + ":" + player.getPokemonCaught().size() + ":" + player.getCaughtTypes().size()
 		+ ":" + player.getMaxCP());
 		System.out.print("<" + map.getStart().getRow() + "," + map.getStart().getCol() + ">");
 		for (int i = 0; i < player.getPath().size() - 1; i++) {
+			System.out.print("->");
 			map.printPath(player.getPath().get(i), player.getPath().get(i+1));
 		}
 	}
 
+	/**
+	 * Write the best solution to given file
+	 *
+	 * @param outputFile file to write the solution
+	 * @param pair pair containing best path and highest score
+	 * @throws Exception every exception when write file
+	 */
 	private void writeSolutionToFile(File outputFile, Pair pair) throws Exception {
 		BufferedWriter bw = new BufferedWriter(new FileWriter(outputFile));
 		bw.write(String.valueOf(pair.getScore()));
@@ -146,40 +183,16 @@ public class Game {
 
 		Game game = new Game();
 		game.initialize(inputFile);
-		Pair bestPair = game.findPath(map.getVisitList(), player, 0);
+		Pair bestPair = game.findPath(map.getVisitList(), player);
 		player = bestPair.getPlayer();
 		player.addPath(map.getDestination());
-		game.printPath(bestPair);
+		game.printPath();
 		game.writeSolutionToFile(outputFile, bestPair);
 
 		stopTime = System.nanoTime();
 		System.out.println();
 		System.out.println("FindPath Time: " + (stopTime - startTime) / 1000000000.0 + " second(s)");
-
-		// TODO:
-		// Read the configures of the map and pokemons from the file inputFile
-		// and output the results to the file outputFile
 	}
 }
 
-class Pair {
-	private int score;
-	private Player player;
 
-	Pair(int score, Player player) {
-		this.score = score;
-		this.player = new Player(player);
-	}
-
-	public Player getPlayer() {
-		return player;
-	}
-
-	public int getScore() {
-		return score;
-	}
-
-	public void setScore(int score) {
-		this.score = score;
-	}
-}

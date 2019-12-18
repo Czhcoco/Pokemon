@@ -21,7 +21,6 @@ public class AudioManager {
      * </p>
      */
     private final Set<MediaPlayer> soundPool = new HashSet<>();
-    private boolean enabled = true;
 
     /**
      * Enumeration of known sound resources.
@@ -35,19 +34,19 @@ public class AudioManager {
         }
     }
 
+    /**
+     * Default Constructor
+     */
     private AudioManager() {
     }
 
+    /**
+     * Get instance of audio manager class
+     *
+     * @return instance of this class
+     */
     public static AudioManager getInstance() {
         return INSTANCE;
-    }
-
-    public boolean isEnabled() {
-        return enabled;
-    }
-
-    public void setEnabled(boolean enabled) {
-        this.enabled = enabled;
     }
 
     /**
@@ -65,27 +64,28 @@ public class AudioManager {
      * @param name the name of the sound file to be played, excluding .mp3
      */
     private void playFile(final String name) {
-        if (this.isEnabled()){
-            Path RES_PATH = Paths.get("/media");
-            Path path = Paths.get((RES_PATH).resolve(name+".mp3").toString());
-            if (path.toFile()==null){
-                System.out.println("Coco is not bad");
-            }
-            String s = getClass().getResource(RES_PATH.resolve(name+".mp3").toString()).toExternalForm();
-
-            MediaPlayer media = new MediaPlayer(new Media(s));
-
-            soundPool.add(media);
-            media.play();
-
-            media.setOnEndOfMedia(() -> {
-                    soundPool.remove(media);
-                    media.dispose();
-            });
+        Path RES_PATH = Paths.get("/media");
+        Path path = Paths.get((RES_PATH).resolve(name+".mp3").toString());
+        if (path.toFile()==null){
+            System.out.println("Coco is not bad");
         }
+        String s = getClass().getResource(RES_PATH.resolve(name+".mp3").toString()).toExternalForm();
+
+        MediaPlayer media = new MediaPlayer(new Media(s));
+
+        soundPool.add(media);
+        media.play();
+
+        media.setOnEndOfMedia(() -> {
+                soundPool.remove(media);
+                media.dispose();
+        });
     }
 
-    public void stopSound() {
+    /**
+     * Stop all the sounds currently played
+     */
+    void stopSound() {
         soundPool.clear();
     }
 
@@ -94,7 +94,7 @@ public class AudioManager {
      *
      * @param name Enumeration of the sound, given by {@link SoundRes}.
      */
-    public void playSound(final SoundRes name) {
+    void playSound(final SoundRes name) {
         playFile(name.toString());
     }
 }

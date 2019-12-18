@@ -32,9 +32,6 @@ public class Game {
 		line = br.readLine();
 		while (line != null) {
 			String[] content = line.split(",");
-//			for (String s : content) {
-//				s.trim();
-//			}
 
 			if(content.length > 3) {
 				Pokemon pokemon = new Pokemon(Integer.parseInt(content[0].substring(1)),
@@ -177,6 +174,11 @@ public class Game {
 		return map;
 	}
 
+	/**
+	 * Get player
+	 *
+	 * @return player
+	 */
 	public static Player getPlayer() {
 		return player;
 	}

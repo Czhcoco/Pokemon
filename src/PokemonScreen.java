@@ -2,42 +2,26 @@ import java.io.File;
 import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.Random;
-import java.util.TimerTask;
 
 import javafx.animation.AnimationTimer;
 import javafx.application.Application;
 import javafx.application.Platform;
 import javafx.beans.property.SimpleIntegerProperty;
-import javafx.beans.property.SimpleStringProperty;
-import javafx.event.EventHandler;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
-import javafx.geometry.Rectangle2D;
 import javafx.scene.*;
 import javafx.scene.control.Alert;
-import javafx.scene.control.Button;
 import javafx.scene.control.Label;
-import javafx.scene.effect.Light;
-import javafx.scene.effect.Lighting;
 import javafx.scene.image.*;
-import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
-import javafx.scene.layout.Pane;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
-import javafx.scene.paint.Paint;
-import javafx.scene.text.Text;
-import javafx.stage.Screen;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
 
 public class PokemonScreen extends Application {
-
-    private static int row, col;
-
-    private Game game;
 
     private Player player;
 
@@ -67,7 +51,6 @@ public class PokemonScreen extends Application {
     private static SimpleIntegerProperty numBalls = new SimpleIntegerProperty(0);
 
     private static Group mapGroup;
-    private static VBox rightPanel;
     private static Label labelStatus;
 
     private static AnimationTimer timer;
@@ -101,7 +84,7 @@ public class PokemonScreen extends Application {
         mainPane.setCenter(mapGroup);
 
         // right-sided menu
-        rightPanel = new VBox(10);
+        VBox bottom = new VBox(10);
 
         labelScore.textProperty().bind(score.asString());
         HBox scoreBox = new HBox(new Label("Current Score: "), labelScore);
@@ -114,15 +97,15 @@ public class PokemonScreen extends Application {
 
         labelStatus = new Label("");
 
-        rightPanel.getChildren().addAll(scoreBox, pokeBox, ballBox, labelStatus);
+        bottom.getChildren().addAll(scoreBox, pokeBox, ballBox, labelStatus);
         scoreBox.setAlignment(Pos.CENTER);
         pokeBox.setAlignment(Pos.CENTER);
         ballBox.setAlignment(Pos.CENTER);
         labelStatus.setAlignment(Pos.CENTER);
-        rightPanel.setPadding(new Insets(40));
+        bottom.setPadding(new Insets(40));
 
-        mainPane.setBottom(rightPanel);
-        rightPanel.setAlignment(Pos.CENTER);
+        mainPane.setBottom(bottom);
+        bottom.setAlignment(Pos.CENTER);
 
         Scene scene = new Scene(mainPane);
 
@@ -150,6 +133,8 @@ public class PokemonScreen extends Application {
                         System.out.println("move");
                         score.set(score.get() - 1);
                         labelStatus.setText("");
+
+                        //Player encounter station, pokemon or destination
                         if (player.equals(visitList.get(0))) {
                             System.out.println("visit");
                             Cell cell = visitList.remove(0);
@@ -193,9 +178,14 @@ public class PokemonScreen extends Application {
 
     }
 
-    public void renderMap(Group group) {
+    /**
+     * Render map according to given input file
+     *
+     * @param group group containing imageViews of each cell
+     */
+    private void renderMap(Group group) {
         System.out.println("Rendering map");
-        game = new Game();
+        Game game = new Game();
 
         File inputFile = new File("./sampleInput.txt");
 
@@ -221,7 +211,7 @@ public class PokemonScreen extends Application {
 
         player.setPosition(wholePath.remove(0));
 
-
+        //Get the image of each cell
         int numOfPoke = 0;
         for(int i = 0; i < map.getRow(); i++) {
             for(int j = 0; j < map.getCol(); j++) {
@@ -262,10 +252,10 @@ public class PokemonScreen extends Application {
         }
     }
 
-
+    /**
+     * Show catch animation when player successfully catch the pokemon
+     */
     private synchronized static void showCatchAnimation() {
-        System.out.println(122);
-
         ArrayList<Image> frames = catchSuccessfulFrames;
         Stage newStage = new Stage();
         newStage.setTitle("My New Stage Title");
@@ -296,7 +286,7 @@ public class PokemonScreen extends Application {
                         Thread.sleep(50);
                 }
             } catch (InterruptedException e) {
-                System.out.println("Animation window is interrupted, continue the game...");
+                e.printStackTrace();
             } finally {
                 Platform.runLater(() -> {
                     newStage.close();
@@ -306,9 +296,16 @@ public class PokemonScreen extends Application {
         });
         catchAnimationThread.setDaemon(true);
         catchAnimationThread.start();
-        System.out.println(133);
     }
 
+    /**
+     * Get the image of cell with given type
+     * Randomly generate a image for pokemon, ensuring they are not all the same
+     *
+     * @param type type of the cell
+     * @param n number of pokemon, 0 for other types
+     * @return the image of cell with given type
+     */
     private Image getImage(Type type, int n) {
         switch (type) {
             case WALL:
@@ -337,6 +334,13 @@ public class PokemonScreen extends Application {
         }
     }
 
+    /**
+     * Get the direction of player's next move
+     *
+     * @param a cell a
+     * @param b cell b
+     * @return the direction of cell a to cell b
+     */
     private Type getDirection(Cell a, Cell b) {
         if (a.getRow() == b.getRow() + 1 && a.getCol() == b.getCol())
             return Type.UP;

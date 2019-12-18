@@ -2,7 +2,10 @@ import java.util.*;
 
 public class Map {
 
-    private static final char WALL = '#', PATH = ' ', START = 'B', DESTINATION = 'D', STATION = 'S', POKEMON = 'P';
+    private static final char WALL = '#';
+    private static final char PATH = ' ';
+    private static final char START = 'B';
+    private static final char DESTINATION = 'D';
 
     /**
      * Parameters of map's size, start point and destination point
@@ -45,20 +48,37 @@ public class Map {
      * @param col column number of map
      */
     Map(int row, int col) {
-        this.MAX_ROW = row;
-        this.MAX_COL = col;
+        MAX_ROW = row;
+        MAX_COL = col;
         cells = new Cell[row][col];
     }
 
+    /**
+     * Get the row of the map
+     *
+     * @return row of the map
+     */
     public static int getRow() {
         return MAX_ROW;
     }
 
+    /**
+     * Get the column of the map
+     *
+     * @return the column of the map
+     */
     public static int getCol() {
         return MAX_COL;
     }
 
-    public Type getCellType(int row, int col) {
+    /**
+     * Get the type of cell with given row and column
+     *
+     * @param row row of the cell
+     * @param col column of the cell
+     * @return type of the cell with given row and column
+     */
+    Type getCellType(int row, int col) {
         if (cells[row][col] instanceof Station)
             return Type.STATION;
         else if (cells[row][col] instanceof Pokemon)
@@ -271,6 +291,13 @@ public class Map {
         return pathString.toString();
     }
 
+    /**
+     * List of cells between cell a and cell b
+     *
+     * @param a cell a
+     * @param b cell b
+     * @return list of cells between cell a and cell b
+     */
     ArrayList<Cell> returnPath(Cell a, Cell b) {
         return wholePath.get(wholeList.indexOf(a)).getPath(wholeList.indexOf(b));
     }

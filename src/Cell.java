@@ -123,9 +123,4 @@ public class Cell {
         Cell temp = (Cell) o;
         return temp.row == this.row && temp.col == this.col;
     }
-
-//    @Override
-//    public String toString() {
-//        return "Cell [row=" + row + ", col=" + col + "]";
-//    }
 }

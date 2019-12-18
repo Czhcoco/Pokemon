@@ -61,11 +61,21 @@ public class Player {
         this.caughtTypes = new ArrayList<>(player.caughtTypes);
     }
 
-    public int getRow() {
+    /**
+     * Get the current row of the player
+     *
+     * @return row of the player
+     */
+    int getRow() {
         return row;
     }
 
-    public int getCol() {
+    /**
+     * Get the current column of the player
+     *
+     * @return column of the player
+     */
+    int getCol() {
         return col;
     }
 
@@ -201,11 +211,22 @@ public class Player {
         return 0;
     }
 
+    /**
+     * Set the new position of the player
+     *
+     * @param a new position to be set
+     */
     void setPosition(Cell a) {
         this.row = a.getRow();
         this.col = a.getCol();
     }
 
+    /**
+     * Check whether the object has the same location with player
+     *
+     * @param o object to be checked
+     * @return true for same location, false otherwise
+     */
     @Override
     public boolean equals(Object o) {
         if (o instanceof Station)
@@ -217,6 +238,12 @@ public class Player {
         return false;
     }
 
+    /**
+     * Get the score of current cell
+     *
+     * @param cell cell to be checked
+     * @return the score of the cell
+     */
     int getScore(Cell cell) {
         if (cell instanceof Station) {
             return ((Station) cell).getNumOfBalls();

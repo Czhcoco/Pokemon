@@ -1,0 +1,9 @@
+Bonus Task 1:
+Open a terminal and change directory to Pokemon_PA3. 
+Type the following command where <javafx-sdk-root> is the path of the JavaFX SDK.
+	
+	java --module-path="<javafx-sdk-root>/lib" --add-modules="javafx.controls,javafx.media,javafx.base,javafx.graphics" --add-exports="javafx.graphics/com.sun.glass.utils=ALL-UNNAMED" -jar Pokemon_PA3.jar
+
+Bonus Task 2:
+Run the Game.main.
+The result is in sampleOutput.txt

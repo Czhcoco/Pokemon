@@ -1,6 +1,10 @@
 import java.util.ArrayList;
 
 class Path {
+
+    /**
+     * List of paths from this pokemon/station to another pokemon/station
+     */
     private ArrayList<ArrayList<Cell>> paths;
 
     {
@@ -9,6 +13,7 @@ class Path {
 
     /**
      * Add path from this pokemon/station to another pokemon/station
+     *
      * @param path path from this pokemon/station to another pokemon/station
      */
     void addPath(ArrayList<Cell> path) {

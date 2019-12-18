@@ -1,5 +1,8 @@
 class Station extends Cell {
 
+    /**
+     * Number of balls in the station
+     */
     private int numOfBalls;
 
     /**

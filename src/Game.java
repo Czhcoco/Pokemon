@@ -62,22 +62,24 @@ public class Game {
 		map.getVisitList().remove(map.getStart());
 		map.getVisitList().remove(map.getDestination());
 		player.addPath(map.getStart());
+
+		System.out.println("Initialization done");
 	}
 
-	/**
-	 * Calculate the score of given pokemon/station
-	 *
-	 * @param cell pokemon or station
-	 * @return the score of given pokemon/station
-	 */
-	private int getScore(Cell cell) {
-		if (cell instanceof Station) {
-			return ((Station) cell).getNumOfBalls();
-		} else if (cell instanceof Pokemon) {
-			return 5 + player.newType(((Pokemon) cell)) * 10 + player.cpChange(cell) - ((Pokemon) cell).getNumOfRequiredBalls();
-		}
-		return 0;
-	}
+//	/**
+//	 * Calculate the score of given pokemon/station
+//	 *
+//	 * @param cell pokemon or station
+//	 * @return the score of given pokemon/station
+//	 */
+//	int getScore(Cell cell) {
+//		if (cell instanceof Station) {
+//			return ((Station) cell).getNumOfBalls();
+//		} else if (cell instanceof Pokemon) {
+//			return 5 + player.newType(((Pokemon) cell)) * 10 + player.cpChange(cell) - ((Pokemon) cell).getNumOfRequiredBalls();
+//		}
+//		return 0;
+//	}
 
 	/**
 	 * Calculate the benefit of going to station/pokemon current to station/pokemon next
@@ -87,7 +89,7 @@ public class Game {
 	 * @return the benefit of this move
 	 */
 	private int getBenefit(Cell current, Cell next) {
-		return getScore(next) - map.getDistance(current, next);
+		return player.getScore(next) - map.getDistance(current, next);
 	}
 
 	/**
@@ -97,7 +99,7 @@ public class Game {
 	 * @param currentPlayer player
 	 * @return the best path and highest score
 	 */
-	private Pair findPath(ArrayList<Cell> visitList, Player currentPlayer) {
+	Pair findPath(ArrayList<Cell> visitList, Player currentPlayer) {
 		int score = -map.getDistance(currentPlayer.getPath().get(currentPlayer.getPath().size() - 1), map.getDestination());
 		Player bestPlayer = new Player(currentPlayer);
 //		System.out.println("visit size:" + visitList.size());
@@ -166,8 +168,21 @@ public class Game {
 		bw.close();
 	}
 
+	/**
+	 * Get map
+	 *
+	 * @return map
+	 */
+	public static Map getMap() {
+		return map;
+	}
+
+	public static Player getPlayer() {
+		return player;
+	}
+
 	public static void main(String[] args) throws Exception{
-		File inputFile = new File("./sampleIn.txt");
+		File inputFile = new File("./sampleInput.txt");
 		File outputFile = new File("./sampleOutput.txt");
 
 		if (args.length > 0) {
@@ -191,7 +206,7 @@ public class Game {
 
 		stopTime = System.nanoTime();
 		System.out.println();
-		System.out.println("FindPath Time: " + (stopTime - startTime) / 1000000000.0 + " second(s)");
+		System.out.println("FindPath Time: " + (stopTime - startTime) / 1_000_000_000.0 + " second(s)");
 	}
 }
 

@@ -4,15 +4,32 @@ public class Map {
 
     private static final char WALL = '#', PATH = ' ', START = 'B', DESTINATION = 'D', STATION = 'S', POKEMON = 'P';
 
+    /**
+     * Parameters of map's size, start point and destination point
+     */
     private Cell[][] cells;
-    private int MAX_ROW;
-    private int MAX_COL;
+    private static int MAX_ROW;
+    private static int MAX_COL;
     private Cell start, destination;
 
+    /**
+     * List of pokemon and stations
+     */
     private ArrayList<Cell> visitList;
+
+    /**
+     * List of pokemon, stations, start point and destination point
+     */
     private ArrayList<Cell> wholeList;
 
+    /**
+     * Distance between one pokemon/station and another pokemon/station
+     */
     private int[][] distance;
+
+    /**
+     * List of paths from one pokemon/station to another pokemon/station
+     */
     private ArrayList<Path> wholePath;
 
     {
@@ -31,6 +48,29 @@ public class Map {
         this.MAX_ROW = row;
         this.MAX_COL = col;
         cells = new Cell[row][col];
+    }
+
+    public static int getRow() {
+        return MAX_ROW;
+    }
+
+    public static int getCol() {
+        return MAX_COL;
+    }
+
+    public Type getCellType(int row, int col) {
+        if (cells[row][col] instanceof Station)
+            return Type.STATION;
+        else if (cells[row][col] instanceof Pokemon)
+            return Type.POKEMON;
+        else if (cells[row][col].equals(start))
+            return Type.START;
+        else if (cells[row][col].equals(destination))
+            return Type.DESTINATION;
+        else if (!cells[row][col].isValid())
+            return Type.WALL;
+        else
+            return Type.PATH;
     }
 
     /**
@@ -138,6 +178,9 @@ public class Map {
         return (row >= 0 && row < MAX_ROW && col >= 0 && col < MAX_COL && cells[row][col].isValid());
     }
 
+    /**
+     * UP, LEFT, RIGHT, DOWN
+     */
     private static final int[] rowNum = {-1, 0, 0, 1};
     private static final int[] colNum = {0, -1, 1, 0};
 
@@ -226,5 +269,9 @@ public class Map {
             }
         }
         return pathString.toString();
+    }
+
+    ArrayList<Cell> returnPath(Cell a, Cell b) {
+        return wholePath.get(wholeList.indexOf(a)).getPath(wholeList.indexOf(b));
     }
 }

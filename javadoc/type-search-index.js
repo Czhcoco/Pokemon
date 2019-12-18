@@ -1,0 +1,1 @@
+typeSearchIndex = [{"p":"<Unnamed>","l":"Cell"},{"p":"<Unnamed>","l":"Game"},{"p":"<Unnamed>","l":"Map"},{"p":"<Unnamed>","l":"Pair"},{"p":"<Unnamed>","l":"Path"},{"p":"<Unnamed>","l":"Player"},{"p":"<Unnamed>","l":"Pokemon"},{"p":"<Unnamed>","l":"Station"},{"l":"所有类","url":"allclasses-index.html"}]

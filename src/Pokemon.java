@@ -1,11 +1,15 @@
 class Pokemon extends Cell {
+
+    /**
+     * Pokemon's name, type, combat power, and number of balls needed to catch it
+     */
     private String name;
     private String type;
     private int combatPower;
     private int numOfRequiredBalls;
 
     /**
-     * Create a pokemon with given row, column, name, type, combat power, and number of balls required to catch
+     * Create a pokemon with given row, column, name, type, combat power, and number of balls required to catch it
      *
      * @param row row of pokemon
      * @param col column of pokemon

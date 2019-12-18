@@ -2,12 +2,25 @@ import java.util.ArrayList;
 
 public class Cell {
 
+    /**
+     * row and column of cell
+     */
     private int row;
     private int col;
 
+    /**
+     * Whether the cell can be passed
+     */
     private boolean valid;
+
+    /**
+     * Distance from a given source
+     */
     private int dist;
 
+    /**
+     * Path from given source to this cell
+     */
     private ArrayList<Cell> path;
 
     {

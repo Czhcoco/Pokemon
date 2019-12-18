@@ -2,13 +2,29 @@ import java.util.ArrayList;
 
 public class Player {
 
+    /**
+     * Location of player, ball in player's bag, and max combat power of pokemon in bag
+     */
     private int row;
     private int col;
-    private ArrayList<Pokemon> pokemonCaught;
-    private ArrayList<Cell> path;
-    private ArrayList<String> caughtTypes;
     private int ballInBag;
     private int maxCP;
+
+    /**
+     * List of pokemon caught by player
+     */
+    private ArrayList<Pokemon> pokemonCaught;
+
+    /**
+     * Current path containing only pokemon and station(s)
+     */
+    private ArrayList<Cell> path;
+
+    /**
+     * List of types of pokemon being caught
+     */
+    private ArrayList<String> caughtTypes;
+
 
     {
         pokemonCaught = new ArrayList<>();
@@ -43,6 +59,14 @@ public class Player {
         this.pokemonCaught = new ArrayList<>(player.pokemonCaught);
         this.path = new ArrayList<>(player.path);
         this.caughtTypes = new ArrayList<>(player.caughtTypes);
+    }
+
+    public int getRow() {
+        return row;
+    }
+
+    public int getCol() {
+        return col;
     }
 
     /**
@@ -173,6 +197,31 @@ public class Player {
         if (cell instanceof Pokemon) {
             if (((Pokemon) cell).getCombatPower() > maxCP)
                 return ((Pokemon) cell).getCombatPower() - maxCP;
+        }
+        return 0;
+    }
+
+    void setPosition(Cell a) {
+        this.row = a.getRow();
+        this.col = a.getCol();
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (o instanceof Station)
+            return ((Station) o).getRow() == this.row && ((Station) o).getCol() == this.col;
+        if (o instanceof Pokemon)
+            return ((Pokemon) o).getRow() == this.row && ((Pokemon) o).getCol() == this.col;
+        else if (o instanceof Cell)
+            return ((Cell) o).getRow() == this.row && ((Cell) o).getCol() == this.col;
+        return false;
+    }
+
+    int getScore(Cell cell) {
+        if (cell instanceof Station) {
+            return ((Station) cell).getNumOfBalls();
+        } else if (cell instanceof Pokemon) {
+            return 5 + newType(((Pokemon) cell)) * 10 + cpChange(cell) - ((Pokemon) cell).getNumOfRequiredBalls();
         }
         return 0;
     }
